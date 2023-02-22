@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  keycloak:
+    image: frplante/keycloak:12.0.4
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: password
+      KEYCLOAK_LOGLEVEL: DEBUG
+      ROOT_LOGLEVEL: DEBUG
+    ports:
+      - 8080:8080
+      - 8443:8443
+    depends_on:
+      - postgres
+
+  postgres:
+    image: "postgres:11"
+    volumes:
+      - "postgres_data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: "keycloak"
+      POSTGRES_USER: "keycloak"
+      POSTGRES_PASSWORD: "password"
+
+  pgadmin:
+    image: "dpage/pgadmin4:6"
+    volumes:
+      - "pgadmin_data:/var/lib/pgadmin"
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@domain.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  pgadmin_data:
